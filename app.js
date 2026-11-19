@@ -244,7 +244,7 @@ async function searchPlaces(){
   try{
     const url=new URL('https://photon.komoot.io/api/');url.searchParams.set('q',query);url.searchParams.set('limit','7');
     if(['en','de','fr'].includes(lang))url.searchParams.set('lang',lang);
-    if(focus){url.searchParams.set('lat',String(focus[0]));url.searchParams.set('lon',String(focus[1]));}
+    if(focus){url.searchParams.set('lat',focus[0].toFixed(2));url.searchParams.set('lon',focus[1].toFixed(2));}
     const response=await fetch(url,{signal:controller.signal,credentials:'omit'});if(!response.ok)throw Error('Place search failed');
     const data=await response.json();if(seq!==searchRequest)return;const items=Places.results(data);
     if(searchCache.size>=30)searchCache.delete(searchCache.keys().next().value);searchCache.set(key,items);showPlaceResults(items);
