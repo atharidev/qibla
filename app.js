@@ -10,7 +10,11 @@ let layer=street,failedTiles=0;let qiblaHalo,kaabaPin,routeArrows=[],combinedPin
 let pendingSpot=null,pendingAccuracy=null,pendingName='',candidatePin,candidateCircle,draftLandmark=null,draftLine,draftArrow,userMapMove=false;
 let gpsWatch=null,gpsTimer=null,bestGPS=null,gpsRunning=false;
 
-if(map){street.addTo(map);L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);kaabaPin=L.marker(Geo.K,{icon:L.divIcon({className:'',html:'<div class="kaaba-pin">الكعبة · Kaaba</div>',iconSize:[104,29],iconAnchor:[52,14]})}).addTo(map);for(const tiles of [street,satellite]){tiles.on('tileerror',()=>{failedTiles++;if(failedTiles>=3){$('mapError').textContent=t('mapFailed');$('mapError').hidden=false;}});tiles.on('tileload',()=>{failedTiles=0;$('mapError').hidden=true;});}map.on('click',e=>{
+if(map){
+  // Leaflet measures #map only when asked. Keep it measuring: the container changes size with phone toolbars,
+  // rotation, and on a cold WebKit load where style.css applies after this script has already started the map.
+  if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>map.invalidateSize({animate:false})).observe($('map'));
+  street.addTo(map);L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);kaabaPin=L.marker(Geo.K,{icon:L.divIcon({className:'',html:'<div class="kaaba-pin">الكعبة · Kaaba</div>',iconSize:[104,29],iconAnchor:[52,14]})}).addTo(map);for(const tiles of [street,satellite]){tiles.on('tileerror',()=>{failedTiles++;if(failedTiles>=3){$('mapError').textContent=t('mapFailed');$('mapError').hidden=false;}});tiles.on('tileload',()=>{failedTiles=0;$('mapError').hidden=true;});}map.on('click',e=>{
   if(stage===3)return;
   stopGPS();
   if(map.getZoom()<16){message('zoomFirst');map.setView(e.latlng,16);return;}
