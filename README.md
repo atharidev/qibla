@@ -15,6 +15,7 @@ Choose your exact position, mark a visible landmark you are facing, and the app 
 - Arabic and English interface, plus core-flow translations for 18 more languages
 - Installable on iOS and Android as a Progressive Web App
 - No account, camera, microphone, compass, analytics, or server-side location storage
+- Light and dark themes (follows the system until you choose), Arabic-first with right-to-left layout
 
 ## How the calculation works
 
@@ -43,6 +44,12 @@ The repository is configured as a static Vercel project. Import it into Vercel o
 ```bash
 vercel --prod
 ```
+
+## Design
+
+The interface shares its hand with [Sabab](https://sabab.athari.dev/) and [athari.dev](https://athari.dev/): warm ink and paper, hairlines, and IBM Plex Sans Arabic (bundled in `fonts/`, SIL Open Font License). Colour is kept for meaning: green is the Qibla, blue is what you face, gold is where you stand. Line icons draw themselves once in answer to something; nothing loops, and everything stays still with reduced motion.
+
+`theme.js` runs before first paint to set the theme and the language (your saved choice, else the browser's language, else Arabic).
 
 ## Data providers
 
