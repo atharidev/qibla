@@ -86,35 +86,48 @@
   <div class="crosshair" id="crosshair" aria-hidden="true"><span></span><span></span><i></i></div>
   <div class="map-bottom"><span class="map-hint" id="mapHint"></span><span class="aim-detail" id="aimDetail" aria-live="polite"></span></div>
   <div class="map-legend"><span><i class="green-line"></i><span data-t="qibla">Qibla</span></span><span><i class="blue-line"></i><span data-t="facing">You face</span></span></div>
-  <div id="mapError" class="map-error" role="status" hidden></div>
+  <div id="mapError" class="map-error" role="status" hidden><span id="mapErrorText"></span><button id="mapRetry" class="text-button" type="button" data-t="retry">Try again</button></div>
 </section>
 
-<aside class="panel ink-in">
+<aside class="panel ink-in" aria-live="polite">
   <div class="sheet-handle" aria-hidden="true"></div>
   <div class="guide-top">
     <button id="guideBack" class="round small" type="button" data-label="back"><svg><use href="#i-back"/></svg></button>
     <span id="guideProgress" class="eyebrow"></span>
-    <button id="reset" class="text-button" type="button" data-t="reset">Reset</button>
+    <button id="reset" class="text-button" type="button" data-t="startOver">Start over</button>
     <button id="sheetToggle" class="round small" type="button" data-label="hideDetails"><svg><use href="#i-close"/></svg></button>
   </div>
-  <div class="guide-heading"><h1 id="guideTitle"></h1><p id="guideCopy"></p></div>
-  <div class="steps">
-    <button id="step1" type="button" class="step active"><span>1</span><b data-t="yourSpot">Your spot</b></button><i></i>
-    <button id="step2" type="button" class="step"><span>2</span><b data-t="landmark">Landmark</b></button><i></i>
-    <button id="step3" type="button" class="step"><span>3</span><b data-t="direction">Direction</b></button>
+
+  <!-- 1. Start: one obvious action. -->
+  <div id="startPanel">
+    <h1 data-t="startTitle">Find the Qibla</h1>
+    <p class="lead-copy" data-t="startCopy">One tap shows you the way. Your location is used only for this.</p>
+    <div id="notice" class="notice" role="alert" hidden><strong id="noticeTitle"></strong><p id="noticeBody"></p><div id="noticeActions" class="notice-actions"></div></div>
+    <button class="primary big" id="locateButton" type="button"><svg><use href="#i-target"/></svg><span data-t="showQibla">Show my Qibla</span></button>
+    <div class="other-ways"><span data-t="orLabel">Or</span><button class="chip" id="searchPlaceButton" type="button"><svg><use href="#i-search"/></svg><span data-t="searchShort">Search a place</span></button><button class="chip" id="manualButton" type="button"><svg><use href="#i-pin"/></svg><span data-t="pickShort">Pick on the map</span></button></div>
+    <button class="text-button coord-link" id="coordinatesButton" type="button" data-t="coordinates">Enter coordinates</button>
   </div>
 
-  <div id="setupPanel">
-    <div class="instruction"><span class="instruction-icon"><svg id="instructionIcon"><use href="#i-pin"/></svg></span><div><h2 id="stepTitle"></h2><p id="stepDescription"></p></div></div>
-    <button class="primary" id="locateButton" type="button"><svg><use href="#i-target"/></svg><span data-t="locate">Use my location</span></button>
-    <button class="secondary" id="searchPlaceButton" type="button"><svg><use href="#i-search"/></svg><span data-t="findPlace">Find a hotel or place</span></button>
-    <button class="quiet" id="manualButton" type="button" data-t="manual">Choose on the map</button>
-    <button class="text-button coord-button" id="coordinatesButton" type="button" data-t="coordinates">Enter coordinates</button>
-    <div id="locationPreview" class="location-preview" hidden><strong id="previewName"></strong><p id="previewNote"></p></div>
+  <!-- 2. The answer, straight away. -->
+  <div id="answerPanel" hidden>
+    <div class="answer">
+      <div class="compass" aria-hidden="true"><svg class="no-ink" viewBox="0 0 120 120"><path class="dial" pathLength="1" d="M60 10a50 50 0 1 1 0 100a50 50 0 1 1 0-100Z"/><path class="dial-ticks" d="M60 4v8m0 96v8M4 60h8m96 0h8"/><text class="north-n" x="60" y="29">N</text><g id="compassArrow"><path d="m60 22 9 22-9-5-9 5Z"/><path d="M60 40v20"/></g><circle class="center-dot" cx="60" cy="60" r="4"/></svg></div>
+      <div class="answer-text"><strong id="answerBearing" dir="ltr"></strong><span id="answerWhere"></span></div>
+    </div>
+    <p class="face-line"><i aria-hidden="true"></i><b data-t="faceLine">Face along the green line.</b></p>
+    <div class="exact-card"><svg><use href="#i-hand"/></svg><div><b data-t="exactTitle">Want the exact turn?</b><p data-t="exactCopy">Tap a building or corner you can see. We’ll tell you how far to turn.</p><button id="useTarget" class="text-button" type="button" data-t="useTarget">Use a target instead</button></div></div>
+    <p id="answerNote" class="answer-note"></p>
+    <div class="answer-actions"><button id="editLocation" class="text-button" type="button" data-t="changeSpot">Change my spot</button></div>
+  </div>
+
+  <!-- Precise placement with the centre target: picking your spot, or aiming at what you see. -->
+  <div id="modePanel" hidden>
+    <h1 id="modeTitle"></h1>
+    <p class="lead-copy" id="modeCopy"></p>
     <div id="aimGuide" class="aim-guide" hidden><span><i class="here-dot"></i><b data-t="imHere">I’m here</b></span><svg><use href="#i-arrow"/></svg><span><i class="there-dot"></i><b data-t="lookHere">I’m looking here</b></span></div>
-    <p class="privacy-note" id="setupNote" data-t="privacyShort">Your location is used only when you ask.</p>
   </div>
 
+  <!-- 3. The exact turn. -->
   <div id="resultPanel" hidden>
     <div class="result-card">
       <div class="result-eyebrow" data-t="towardKaaba">TOWARD THE KAABA</div>
@@ -130,10 +143,9 @@
     <div class="result-actions"><button id="editLandmark" class="secondary" type="button" data-t="changeLandmark">Change landmark</button><button id="worldView" class="text-button" type="button" data-t="wholeRoute">See the whole route</button></div>
   </div>
 
-  <div id="locationCard" class="location-card" hidden><span class="location-symbol"><svg><use href="#i-pin"/></svg></span><div><b data-t="yourSpot">Your spot</b><span id="locationCoordinates" dir="ltr"></span><small id="locationAccuracy"></small></div><button class="text-button" id="editLocation" type="button" data-t="edit">Edit</button></div>
   <p id="status" role="status" aria-live="polite"></p>
-  <div class="guided-actions"><button class="map-confirm" id="centerConfirm" type="button"><svg><use href="#i-check"/></svg><span data-t="setHere">Set here</span></button></div>
-  <footer><span><svg><use href="#i-check"/></svg><span data-t="compassFree">No compass sensor needed</span></span><button id="aboutMethod" class="text-button" type="button" data-t="how">How it works</button></footer>
+  <div class="guided-actions"><button class="map-confirm" id="centerConfirm" type="button"><svg><use href="#i-check"/></svg><span data-t="setHere">Set here</span></button><button id="cancelMode" class="text-button" type="button" data-t="cancel">Cancel</button></div>
+  <footer><button id="aboutMethod" class="text-button" type="button" data-t="how">How it works</button></footer>
 </aside>
 </main>
 
