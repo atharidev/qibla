@@ -6,7 +6,9 @@ Choose your exact position, mark a visible landmark you are facing, and the app 
 
 ## Features
 
-- Guided three-step flow: position, visible landmark, Qibla direction
+- One tap: “Show my Qibla” gives the bearing, a compass and the green line on the map as soon as the location is good enough, then keeps sharpening it quietly
+- Optional exact turn: tap a building or corner you can see and the app says how far to turn (or aim with the centre target)
+- Plain next steps when location is off, unavailable or slow, and when the map is slow to load
 - Refined browser GPS with an accuracy estimate
 - Hotel and place search through Photon/OpenStreetMap
 - Manual pin placement and coordinate or map-link input

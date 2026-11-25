@@ -289,12 +289,11 @@ body[data-stage="2"] .panel,body[data-stage="3"] .panel{top:200px;max-height:cal
 .location-card b{display:block;font-size:13px;font-weight:600}
 #locationCoordinates{display:block;font-size:13px;margin-top:2px;font-variant-numeric:tabular-nums}
 .location-card small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
-body[data-stage="3"] .location-card,body[data-stage="3"] .guide-heading p{display:none}
 #status{font-size:14px;line-height:1.5;color:var(--warn)}
 #status:not(:empty){margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--warn-bg)}
 
 .guided-actions{position:sticky;z-index:3;bottom:-20px;margin:6px 0 -20px;padding:14px 0 20px;background:linear-gradient(to bottom,color-mix(in srgb,var(--surface) 0%,transparent),var(--surface) 30%)}
-.guided-actions:has([hidden]),body[data-stage="1"][data-preview="false"] .guided-actions{display:none}
+.guided-actions:has(#centerConfirm[hidden]){display:none}
 .map-confirm{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:52px;padding:10px 18px;border-radius:14px;background:var(--primary);color:var(--on-primary);font-size:16px;font-weight:600;line-height:1.35;text-align:center;transition:transform .15s,background-color .3s,color .3s}
 .map-confirm.aiming{background:var(--facing);color:var(--on-facing)}
 .map-confirm:disabled{background:var(--raised);color:var(--dim)}
@@ -357,9 +356,7 @@ dialog select:focus,dialog input:focus{outline:none;border-color:var(--text);box
   .js .ink-in.drawn svg:not(.no-ink){stroke-dashoffset:0;transition:stroke-dashoffset .7s var(--ink-ease) calc(var(--i,0) * 70ms + 60ms)}
   .js .brand .needle{fill-opacity:0;transition:fill-opacity .5s ease .7s}
   .js .brand.drawn .needle{fill-opacity:1}
-  .panel.drawn .guide-heading,.panel.drawn .steps,.panel.drawn #setupPanel,.panel.drawn #resultPanel{animation:arrive .5s var(--ease) both}
-  .panel.drawn .steps{animation-delay:.05s}
-  .panel.drawn #setupPanel,.panel.drawn #resultPanel{animation-delay:.1s}
+  .panel.drawn #startPanel,.panel.drawn #answerPanel,.panel.drawn #modePanel,.panel.drawn #resultPanel{animation:arrive .5s var(--ease) .05s both}
   .map-top,.map-tools,.map-legend{animation:arrive .6s var(--ease) both}
   .map-tools{animation-delay:.08s}
   .result-card.turning .dial,.result-card.turning #turnArc{stroke-dasharray:1 1.02;animation:ink 1.1s var(--ink-ease) both}
@@ -416,15 +413,17 @@ dialog select:focus,dialog input:focus{outline:none;border-color:var(--text);box
   .zoom button,.map-tools>.round{width:40px;height:40px}
   .crosshair{top:calc(50% - var(--map-bottom) / 2)}
   .map-bottom{top:62px;inset-inline:10px 60px;align-items:flex-start;gap:5px}
-  body[data-stage="2"] .map-bottom{top:auto;bottom:calc(var(--map-bottom) + 32px)}
-  body[data-stage="2"] .map-hint{display:none}
-  body[data-stage="2"] .map-legend{bottom:calc(var(--map-bottom) + 66px)}
+  /* On phones the sheet already says what to do; the map keeps only the aiming distance, low and out of the way. */
+  .map-hint{display:none}
+  body[data-state="aim"] .map-bottom{top:auto;bottom:calc(var(--map-bottom) + 32px)}
+  body[data-state="aim"] .map-legend{bottom:calc(var(--map-bottom) + 66px)}
   body[data-stage="3"] .map-bottom{display:none}
   .map-hint{border-radius:12px;padding:8px 12px;font-size:14px;text-align:start}
   .aim-detail{font-size:12px;padding:4px 10px}
   .map-legend{bottom:calc(var(--map-bottom) + 32px);inset-inline-start:10px;inset-inline-end:auto;padding:5px 9px;gap:10px;font-size:11px;border-radius:10px}
   .map-error{top:62px;inset-inline:10px;max-width:none;font-size:12.5px}
-  body[data-stage="2"] .map-error,body[data-stage="3"] .map-error{top:160px}
+  body[data-stage="3"]:not(.guide-collapsed) .map-error{top:114px}
+  body.guide-collapsed:not([data-stage="1"]) .map-error{top:166px}
 
   .panel,body[data-stage="2"] .panel,body[data-stage="3"] .panel{top:auto;bottom:max(10px,env(safe-area-inset-bottom));inset-inline:10px;width:auto;max-height:min(46dvh,440px);padding:8px 16px 14px;border-radius:24px;box-shadow:0 -12px 36px -22px rgba(0,0,0,.4),var(--shadow-sm)}
   .sheet-handle{display:block;width:36px;height:4px;margin:0 auto 8px;border-radius:4px;background:var(--line-strong)}
@@ -456,7 +455,7 @@ dialog select:focus,dialog input:focus{outline:none;border-color:var(--text);box
   .location-card{margin-top:10px;padding-top:10px}
   #locationCoordinates{font-size:12.5px}
   .guide-collapsed .panel{max-height:76px;overflow:hidden}
-  .guide-collapsed .guide-heading,.guide-collapsed .steps,.guide-collapsed #setupPanel,.guide-collapsed #resultPanel,.guide-collapsed #locationCard,.guide-collapsed #status,.guide-collapsed .guided-actions{display:none!important}
+  .guide-collapsed .guide-heading,.guide-collapsed .steps,.guide-collapsed #startPanel,.guide-collapsed #answerPanel,.guide-collapsed #modePanel,.guide-collapsed #resultPanel,.guide-collapsed #status,.guide-collapsed .guided-actions{display:none!important}
   .guide-collapsed #sheetToggle svg{transform:rotate(45deg)}
 
   dialog{width:calc(100vw - 20px);max-width:none;margin:auto auto max(10px,env(safe-area-inset-bottom));padding:22px 20px;max-height:calc(100dvh - 24px)}
@@ -475,3 +474,74 @@ dialog select:focus,dialog input:focus{outline:none;border-color:var(--text);box
   .route-hud strong{font-size:16px}
   .layer-switch button{padding:0 8px}
 }
+
+/* ---------- first use: one obvious action, then the answer ---------- */
+#startPanel h1,#modePanel h1{font-size:26px;line-height:1.25;letter-spacing:-.02em;margin-bottom:6px}
+[dir=rtl] #startPanel h1,[dir=rtl] #modePanel h1{letter-spacing:0;line-height:1.45}
+.lead-copy{font-size:15px;line-height:1.6;color:var(--muted);margin-bottom:16px}
+[dir=rtl] .lead-copy{line-height:1.75}
+.primary.big{width:100%;min-height:60px;padding:12px 18px;font-size:18px;border-radius:16px;gap:11px}
+.primary.big svg{width:22px;height:22px}
+.primary.big.busy{background:color-mix(in srgb,var(--primary) 82%,var(--bg));font-weight:500;font-size:16px}
+.other-ways{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;font-size:13px;color:var(--dim)}
+.other-ways>span{margin-inline-end:2px}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:500;color:var(--text);transition:border-color .2s,background-color .2s}
+.chip:hover{border-color:var(--line-strong)}
+.chip svg{width:15px;height:15px}
+.notice{margin-top:12px;padding:13px 14px;border-radius:14px;background:var(--warn-bg);border:1px solid color-mix(in srgb,var(--warn) 22%,transparent)}
+.notice strong{display:block;font-size:15px;font-weight:600;color:var(--text)}
+.notice p{font-size:13.5px;line-height:1.6;color:var(--muted);margin-top:3px}
+.notice-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:10px}
+.notice-actions .secondary{min-height:40px;padding:0 16px;font-size:14px}
+.notice-actions .text-button{font-size:13.5px}
+
+.answer{display:flex;align-items:center;gap:16px;margin:2px 0 12px}
+.compass{width:92px;height:92px;flex:none}
+.compass svg{width:100%;height:100%;stroke-width:1.2}
+.compass .dial{stroke:var(--line-strong)}
+.compass .dial-ticks{stroke:var(--dim);stroke-width:1.5}
+.compass .north-n{fill:var(--muted);stroke:none;font:600 11px Plex,system-ui,sans-serif;text-anchor:middle}
+#compassArrow{fill:var(--qibla);stroke:var(--qibla);stroke-width:3;transform-box:view-box;transform-origin:60px 60px;transition:transform 1.1s var(--ease) .2s}
+.compass .center-dot{fill:var(--text);stroke:var(--surface);stroke-width:2}
+.answer-text{display:flex;flex-direction:column;min-width:0}
+#answerBearing{font-size:40px;font-weight:700;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums;unicode-bidi:isolate}
+[dir=rtl] #answerBearing{text-align:right}
+#answerWhere{font-size:14px;color:var(--muted);margin-top:4px;line-height:1.5}
+.face-line{display:flex;align-items:center;gap:10px;font-size:17px;line-height:1.45;margin-bottom:12px}
+.face-line i{flex:none;width:26px;border-top:4px solid var(--qibla);border-radius:3px}
+.face-line b{font-weight:600}
+.exact-card{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;border-radius:16px;background:var(--facing-soft);border:1px solid color-mix(in srgb,var(--facing) 24%,transparent)}
+.exact-card>svg{width:22px;height:22px;color:var(--facing);margin-top:1px}
+.exact-card b{display:block;font-size:15px;font-weight:600}
+.exact-card p{font-size:14px;line-height:1.55;color:var(--muted);margin-top:2px}
+.exact-card .text-button{padding:6px 0 0;font-size:13.5px}
+.answer-note{font-size:12.5px;line-height:1.6;color:var(--dim);margin-top:10px}
+.answer-note:empty{display:none}
+.answer-actions{display:flex;gap:16px;margin-top:4px}
+.answer-actions .text-button{font-size:13.5px}
+#modePanel .aim-guide{margin-top:4px}
+.guided-actions{display:flex;flex-direction:column;align-items:center;gap:2px}
+#cancelMode{font-size:13.5px;color:var(--muted)}
+.map-error{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
+.map-error .text-button{padding:2px 0;font-size:13px;color:var(--warn);text-decoration-color:currentColor}
+@media (max-width:800px){
+  #startPanel h1,#modePanel h1{font-size:23px;margin-bottom:4px}
+  .lead-copy{font-size:14px;margin-bottom:12px}
+  .primary.big{min-height:56px;font-size:17px}
+  .other-ways{margin-top:10px}
+  .answer{gap:14px;margin-bottom:10px}
+  .compass{width:78px;height:78px}
+  #answerBearing{font-size:34px}
+  #answerWhere{font-size:13px}
+  .face-line{font-size:16px;margin-bottom:10px}
+  .exact-card{padding:11px 12px;gap:10px}
+  .exact-card p{font-size:13.5px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .primary.big:not(.busy):hover{transform:translateY(-1px)}
+}
+#startPanel .notice{margin:0 0 12px}
+.coord-link{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
+body[data-state="start"] .map-legend,body[data-state="pick"] .map-legend{display:none}
+body[data-state="start"] .guide-top{min-height:0;margin-bottom:6px}
+.lead-copy.emphasis{color:var(--text);font-weight:600}
